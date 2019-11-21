@@ -6,6 +6,39 @@
 using namespace std;
 using namespace cv;
 
+Mat hist_intensity(Mat img,int porog) {
+	int gist_intensity[256];
+	for (int i = 0; i < 256; i++)
+		gist_intensity[i] = 0;
+	int Max_value = 0;;
+	for (int i = 0; i < img.rows; i++) {
+		for (int j = 0; j < img.cols; j++) {
+			gist_intensity[img.at<uchar>(i, j)]++;
+		}
+	}
+	for (int i = 0; i < 256; i++)
+		if (gist_intensity[i] > Max_value)
+			Max_value = gist_intensity[i];
+	while (Max_value > 700) {
+		for (int i = 0; i < 256; i++) {
+			gist_intensity[i] /= 2;
+		}
+		Max_value /= 2;
+	}
+	Point p(0, Max_value);
+	Mat result(Max_value, 1290, CV_8UC3);
+	cout << Max_value << endl << result.rows << endl;
+	for (int i = 0; i < 256; i++) {
+		if (gist_intensity[i] > 1)
+		{
+			line(result, p, Point(p.x, result.rows - gist_intensity[i]), Scalar(255, 255, 255), 2);
+			p.x += 5;
+		}
+	}
+	line(result, Point(porog * 5, 5), Point(porog * 5 + 2, Max_value), Scalar(0, 0, 255), 5);
+	return result;
+}
+
 int otsuTreshold(Mat image) 
 {
 	int min = image.at<uchar>(0, 0);
@@ -29,8 +62,8 @@ int otsuTreshold(Mat image)
 		{
 			hist[image.at<uchar>(i, j)-min]++;
 		}
-	int m = 0; // m - сумма высот всех бинов, домноженных на положение их середины
-	int n = 0; // n - сумма высот всех бинов
+	int m = 0; 
+	int n = 0; 
 
 	for (int i= 0; i <= max - min; i++)
 	{
@@ -42,31 +75,22 @@ int otsuTreshold(Mat image)
 
 	int alpha1 = 0; // Сумма высот всех бинов для класса 1
 	int beta1 = 0; // Сумма высот всех бинов для класса 1, домноженных на положение их середины
-	// Переменная alpha2 не нужна, т.к. она равна m - alpha1
-	// Переменная beta2 не нужна, т.к. она равна n - alpha1
 
-	// t пробегается по всем возможным значениям порога
 	for (int i = 0; i < max - min; i++)
 	{
 		alpha1 += i * hist[i];
 		beta1 += hist[i];
 		// Считаем вероятность класса 1.
 		float w1 = (float)beta1 / n;
-		// Нетрудно догадаться, что w2 тоже не нужна, т.к. она равна 1 - w1
-		// a = a1 - a2, где a1, a2 - средние арифметические для классов 1 и 2
 		float a = (float)alpha1 / beta1 - (float)(m - alpha1) / (n - beta1);
-		// Наконец, считаем sigma
 		float sigma = w1 * (1 - w1) * a * a;
-		// Если sigma больше текущей максимальной, то обновляем maxSigma и порог
 		if (sigma > maxSigma)
 		{
 			maxSigma = sigma;
 			threshold = i;
 		}
 	}
-	// Не забудем, что порог отсчитывался от min, а не от нуля
 	threshold += min;
-	// Все, порог посчитан, возвращаем его наверх :)
 	return threshold;
 }
 
@@ -75,7 +99,7 @@ Mat makeintThresholdOtsu(Mat image, int threshold)
 	for (int i=0;i<image.rows;i++)
 		for (int j = 0; j < image.cols; j++) 
 		{
-			if (image.at<uchar>(i, j) < threshold)
+			if (image.at<uchar>(i, j) > threshold)
 				image.at<uchar>(i, j) = 255;
 			else 
 				image.at<uchar>(i, j) = 0;
