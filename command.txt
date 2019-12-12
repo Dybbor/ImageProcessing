@@ -1,1 +1,1 @@
-"D:\Cmake\bin\cmake" -DOpenCV_DIR="D:\opencv\build" -G "Visual Studio 15 2017 Win64" "../ImageProcessing
+"D:\Cmake\bin\cmake" -DOpenCV_DIR="D:\opencv\build" -G "Visual Studio 15 2017 Win64" "../ImageProcessing"
