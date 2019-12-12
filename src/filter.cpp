@@ -1,10 +1,10 @@
-#pragma once
 #include <iostream>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 #include <string>
 #include <iomanip>
 #include <fstream>
+#include <conio.h>
 
 using namespace std;
 using namespace cv;
@@ -46,7 +46,7 @@ int MaxDiff(Mat diff)
 	return max;
 }
 
-void WriteInfo(Mat image, ofstream& out, string path_file,string path_image=0, string name=0,int diff=0) //write matrix in file
+void WriteInfo(Mat image, ofstream& out, string path_file,string path_image, string name,int diff) //write matrix in file
 {
 	out << endl;
 	out.open(path_file, ios::app);
@@ -280,27 +280,3 @@ public:
 		img1 = result.clone();
 	}
 };
-Mat CreateBlur(char f, Mat src,bool flag=0) 
-{
-	Mat dst(src.rows, src.cols,CV_8UC3);
-	if (flag)
-	{
-		switch (f) 
-		{
-		default:
-			break;
-		}
-	}
-	else 
-	{
-		switch (f) 
-		{
-		case 'G':
-			GaussianBlur(src, dst, Size(5, 5),0);
-			break;
-		case 'M':
-			medianBlur(src, dst,5);
-		}
-	}
-	return dst;
-}
