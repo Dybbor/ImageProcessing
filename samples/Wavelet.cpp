@@ -212,23 +212,23 @@ Mat DataToMat(double** data, int rows, int cols)
 }
 int main() 
 {
-	Mat image = imread("D:\\GitProject\\ImageProcessing\\picture\\ship.jpg");
+	Mat image = imread("D:\\GithubProjects\\ImageProcessing\\picture\\2048.jpg");
 	Mat wl1, wl2, wl3;
 	Mat dl1, dl2, dl3;
-	double porog = 5;
+	double porog = 0.5;
 	cout << "porog " << porog << endl;
 	if (!image.data) 
 	{
-		cout << "Error immage load" << endl;
+		cout << "Error image load" << endl;
 		return -1;
 	}
-	//namedWindow("image", WINDOW_NORMAL);
-	//namedWindow("wl1",WINDOW_NORMAL); //wavelet level 1
-	//namedWindow("wl2",WINDOW_NORMAL); //wavelet level 2
-	//namedWindow("wl3",WINDOW_NORMAL); //wavelet level 3
-	//namedWindow("dl1", WINDOW_NORMAL); //decoder level 1
-	//namedWindow("dl2", WINDOW_NORMAL); //decoder level 2
-	//namedWindow("dl3", WINDOW_NORMAL); //decoder level 3
+	namedWindow("image", WINDOW_NORMAL);
+	namedWindow("wl1",WINDOW_NORMAL); //wavelet level 1
+	namedWindow("wl2",WINDOW_NORMAL); //wavelet level 2
+	namedWindow("wl3",WINDOW_NORMAL); //wavelet level 3
+	namedWindow("dl1", WINDOW_NORMAL); //decoder level 1
+	namedWindow("dl2", WINDOW_NORMAL); //decoder level 2
+	namedWindow("dl3", WINDOW_NORMAL); //decoder level 3
 	if (image.channels() >1 )
 		cvtColor(image,image, COLOR_BGR2GRAY);
 	double**data = new double*[image.rows];
@@ -257,7 +257,7 @@ int main()
 	WaveletCols(data, image.rows / 4, image.cols / 4);
 	SeparateCols(data, image.rows, image.cols, 4);
 	wl3 = DataToMat(data, image.rows, image.cols);
-	imwrite("D:\\GitProject\\ImageProcessing\\picture\\save_without_porog.jpg", wl3);
+	//imwrite("D:\\GitProject\\ImageProcessing\\picture\\save_without_porog.jpg", wl3);
 	cout << "count porog " << HowMuchPorog(data, image.rows, image.cols, porog) << endl;
 	DeleteLessPorog(data, image.rows, image.cols, porog);
 	//decoder level 3
@@ -279,9 +279,9 @@ int main()
 	BackWaveletRows(data, image.rows , image.cols);
 	dl1 = DataToMat(data, image.rows, image.cols);
 	//showDiff(image, dl1);
-	//threshold(wl3, wl3, 15, 255, THRESH_BINARY);
-	imwrite("D:\\GitProject\\ImageProcessing\\picture\\save_with_porog.jpg", wl3);
-	imwrite("D:\\GitProject\\ImageProcessing\\picture\\grey.jpg", image);
+	threshold(wl3, wl3, 15, 255, THRESH_BINARY);
+	imwrite("D:\\GitProject\\ImageProcessing\\picture\\grey_save.png", wl3);
+	imwrite("D:\\GitProject\\ImageProcessing\\picture\\grey.png", image);
 	imshow("image", image);
 	imshow("wl1", wl1);
 	imshow("wl2", wl2);
